@@ -16,28 +16,12 @@ namespace CC_Parkgarage
             while (true)
             {
                 ReadInput();
-
-                /* n parking lots
-                 * every morning empty
-                 * today m cars are arriving
-                 * every car gets ticket with number (id)
-                 * aren't given out in sorted order
-                 * positive number if parking lot is used
-                 * negative number if parking lot is free
-                 * entries are chronologically -> SortedList
-                 * cars have to enter and leave once
-                 * every car parks on lot with lowest number
-                 * every parking lot has specific price
-                 * on departing car pays no matter how long it was standing
-
-                */
                 var maxValues = GetMaximumSimultaneousCarsInGarage();
-                //Console.WriteLine($"{maxValues.MaxInLot} {maxValues.MaxWaiting}");
+                Console.WriteLine($"{maxValues.MaxInLot} {maxValues.MaxWaiting}");
                 Console.WriteLine(maxValues.Income);
             }
         }
 
-        //  task: get maximum number of cars that have been at the same time in the garage
         private static (int MaxInLot, int MaxWaiting, int Income) GetMaximumSimultaneousCarsInGarage()
         {
             var node = carTracking.First;
@@ -100,7 +84,7 @@ namespace CC_Parkgarage
                 }
 
                 // check for maximum values
-                maxInLot = maxInLot < garage.Lots.Count ? garage.Lots.Count : maxInLot;
+                maxInLot = maxInLot < garage.CurrentlyUsedLots ? garage.CurrentlyUsedLots : maxInLot;
                 maxWaiting = maxWaiting < waitingQueue.Count ? waitingQueue.Count : maxWaiting;
 
                 node = node.Next;
@@ -181,6 +165,8 @@ namespace CC_Parkgarage
                 lotInformation.Car = null;
                 return (car, lotInformation.Price);
             }
+
+            public int CurrentlyUsedLots { get { return Lots.Where(l => l.Value.Car != null).Count(); } }
         }
 
         public class LotInformation
