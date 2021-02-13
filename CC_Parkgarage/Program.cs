@@ -74,13 +74,28 @@ namespace CC_Parkgarage
                 // car is departing
                 else
                 {
-                    var lotInformation = garage.UnparkCar(node.Value);
-                    income += lotInformation.Price * (int)Math.Ceiling((double)lotInformation.Car.Weight / 100);
-
-                    // check if someone is waiting
-                    if (waitingQueue.Count > 0)
+                    // check if car was waiting
+                    if (waitingQueue.Where(c => c.Number == (node.Value * -1)).Any())
                     {
-                        garage.ParkCar(waitingQueue.Dequeue());
+                        var tempQueue = new Queue<Car>();
+                        while (waitingQueue.Count > 0)
+                        {
+                            var c = waitingQueue.Dequeue();
+                            if (c.Number != (node.Value * -1))
+                                tempQueue.Enqueue(c);
+                        }
+                        waitingQueue = tempQueue;
+                    }
+                    else
+                    {
+                        var lotInformation = garage.UnparkCar(node.Value);
+                        income += lotInformation.Price * (int)Math.Ceiling((double)lotInformation.Car.Weight / 100);
+
+                        // check if someone is waiting
+                        if (waitingQueue.Count > 0)
+                        {
+                            garage.ParkCar(waitingQueue.Dequeue());
+                        }
                     }
                 }
 
